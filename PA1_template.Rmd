@@ -12,10 +12,19 @@ output:
 unzip("activity.zip", overwrite=TRUE)
 ```
 
-### 2. Load the data and read the summary of data  
+### 2. Load the data  
 ```{r}
 activity <- read.csv("activity.csv")
+```
+
+### 3. Read the summary of data  
+```{r}
 summary(activity)
+```
+
+### 4. Read the first 6 rows  
+```{r}
+head(activity)
 ```
 
 ## What is mean total number of steps taken per day?  
@@ -23,6 +32,7 @@ summary(activity)
 ```{r}
 library(plyr)
 activity_total_steps <- ddply(activity, .(date), summarize, total_steps_pday = sum(steps, na.rm=TRUE))
+head(activity_total_steps)
 ```
 
 ### 2. Make a histogram of the total number of steps taken each day  
@@ -67,6 +77,7 @@ nrow(subset(activity, is.na(steps)))
 activity_imputed <- join(activity, daily_activity_pattern, by="interval")
 activity_imputed[is.na(activity_imputed$steps), "steps"] <- activity_imputed[is.na(activity_imputed$steps), "total_steps_pday"]
 activity_imputed$total_steps_pday <- NULL
+head(activity_imputed)
 ```
 
 ### 3. Make a histogram of the total number of steps taken each day  
@@ -91,6 +102,7 @@ with(activity_total_steps, round(median(total_steps_pday), digits = 0))
 ```{r}
 activity_imputed$date <- as.Date(activity_imputed$date, format = "%Y-%m-%d")
 activity_imputed$weekday <- as.factor(ifelse(weekdays(activity_imputed$date) %in% c("Saturday", "Sunday"), "weekend", "weekday"))
+head(activity_imputed)
 ```
 
 ### 2. Make a panel plot containing a time series plotof the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis)  

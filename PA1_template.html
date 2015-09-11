@@ -76,10 +76,13 @@ img {
 <h3>1. Unzip the file</h3>
 <pre class="r"><code>unzip(&quot;activity.zip&quot;, overwrite=TRUE)</code></pre>
 </div>
-<div id="load-the-data-and-read-the-summary-of-data" class="section level3">
-<h3>2. Load the data and read the summary of data</h3>
-<pre class="r"><code>activity &lt;- read.csv(&quot;activity.csv&quot;)
-summary(activity)</code></pre>
+<div id="load-the-data" class="section level3">
+<h3>2. Load the data</h3>
+<pre class="r"><code>activity &lt;- read.csv(&quot;activity.csv&quot;)</code></pre>
+</div>
+<div id="read-the-summary-of-data" class="section level3">
+<h3>3. Read the summary of data</h3>
+<pre class="r"><code>summary(activity)</code></pre>
 <pre><code>##      steps                date          interval     
 ##  Min.   :  0.00   2012-10-01:  288   Min.   :   0.0  
 ##  1st Qu.:  0.00   2012-10-02:  288   1st Qu.: 588.8  
@@ -89,13 +92,32 @@ summary(activity)</code></pre>
 ##  Max.   :806.00   2012-10-06:  288   Max.   :2355.0  
 ##  NA's   :2304     (Other)   :15840</code></pre>
 </div>
+<div id="read-the-first-6-rows" class="section level3">
+<h3>4. Read the first 6 rows</h3>
+<pre class="r"><code>head(activity)</code></pre>
+<pre><code>##   steps       date interval
+## 1    NA 2012-10-01        0
+## 2    NA 2012-10-01        5
+## 3    NA 2012-10-01       10
+## 4    NA 2012-10-01       15
+## 5    NA 2012-10-01       20
+## 6    NA 2012-10-01       25</code></pre>
+</div>
 </div>
 <div id="what-is-mean-total-number-of-steps-taken-per-day" class="section level2">
 <h2>What is mean total number of steps taken per day?</h2>
 <div id="calculate-the-total-number-of-steps-taken-per-day" class="section level3">
 <h3>1. Calculate the total number of steps taken per day</h3>
 <pre class="r"><code>library(plyr)
-activity_total_steps &lt;- ddply(activity, .(date), summarize, total_steps_pday = sum(steps, na.rm=TRUE))</code></pre>
+activity_total_steps &lt;- ddply(activity, .(date), summarize, total_steps_pday = sum(steps, na.rm=TRUE))
+head(activity_total_steps)</code></pre>
+<pre><code>##         date total_steps_pday
+## 1 2012-10-01                0
+## 2 2012-10-02              126
+## 3 2012-10-03            11352
+## 4 2012-10-04            12116
+## 5 2012-10-05            13294
+## 6 2012-10-06            15420</code></pre>
 </div>
 <div id="make-a-histogram-of-the-total-number-of-steps-taken-each-day" class="section level3">
 <h3>2. Make a histogram of the total number of steps taken each day</h3>
@@ -144,7 +166,15 @@ daily_activity_pattern[max_ind, &quot;interval&quot;]</code></pre>
 <h3>2. Filling in all of the missing values in the dataset using <strong>the mean for that 5-minute interval</strong>, create a new dataset that is equal to the original dataset but with the missing data filled in</h3>
 <pre class="r"><code>activity_imputed &lt;- join(activity, daily_activity_pattern, by=&quot;interval&quot;)
 activity_imputed[is.na(activity_imputed$steps), &quot;steps&quot;] &lt;- activity_imputed[is.na(activity_imputed$steps), &quot;total_steps_pday&quot;]
-activity_imputed$total_steps_pday &lt;- NULL</code></pre>
+activity_imputed$total_steps_pday &lt;- NULL
+head(activity_imputed)</code></pre>
+<pre><code>##       steps       date interval
+## 1 1.7169811 2012-10-01        0
+## 2 0.3396226 2012-10-01        5
+## 3 0.1320755 2012-10-01       10
+## 4 0.1509434 2012-10-01       15
+## 5 0.0754717 2012-10-01       20
+## 6 2.0943396 2012-10-01       25</code></pre>
 </div>
 <div id="make-a-histogram-of-the-total-number-of-steps-taken-each-day-1" class="section level3">
 <h3>3. Make a histogram of the total number of steps taken each day</h3>
@@ -171,7 +201,15 @@ with(activity_total_steps, hist(total_steps_pday, xlab=&quot;Total number of ste
 <div id="create-a-new-factor-variable-in-the-dataset-with-two-levels---weekday-and-weekend-indicating-whether-a-given-date-is-a-weekday-or-weekend-day" class="section level4">
 <h4>1. Create a new factor variable in the dataset with two levels - “weekday” and “weekend” indicating whether a given date is a weekday or weekend day</h4>
 <pre class="r"><code>activity_imputed$date &lt;- as.Date(activity_imputed$date, format = &quot;%Y-%m-%d&quot;)
-activity_imputed$weekday &lt;- as.factor(ifelse(weekdays(activity_imputed$date) %in% c(&quot;Saturday&quot;, &quot;Sunday&quot;), &quot;weekend&quot;, &quot;weekday&quot;))</code></pre>
+activity_imputed$weekday &lt;- as.factor(ifelse(weekdays(activity_imputed$date) %in% c(&quot;Saturday&quot;, &quot;Sunday&quot;), &quot;weekend&quot;, &quot;weekday&quot;))
+head(activity_imputed)</code></pre>
+<pre><code>##       steps       date interval weekday
+## 1 1.7169811 2012-10-01        0 weekday
+## 2 0.3396226 2012-10-01        5 weekday
+## 3 0.1320755 2012-10-01       10 weekday
+## 4 0.1509434 2012-10-01       15 weekday
+## 5 0.0754717 2012-10-01       20 weekday
+## 6 2.0943396 2012-10-01       25 weekday</code></pre>
 </div>
 <div id="make-a-panel-plot-containing-a-time-series-plotof-the-5-minute-interval-x-axis-and-the-average-number-of-steps-taken-averaged-across-all-weekday-days-or-weekend-days-y-axis" class="section level3">
 <h3>2. Make a panel plot containing a time series plotof the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis)</h3>
